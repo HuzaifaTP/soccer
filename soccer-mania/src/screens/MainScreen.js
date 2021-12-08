@@ -39,20 +39,24 @@ function MainScreen() {
 
   function handleSeasonSelect(e) {
     e.preventDefault();
-    console.log(e.target.value)
-    setSeason(e.target.value);
-    console.log(season)
+    console.log(e.target.value) //Registers as selected year 
+    setSeason(e.target.value); //Registers as previous selected year
     retrieveTeamStatsFromAPI();
+    console.log(season)
   };
 
   const getListOfAllSeasons = () => {
+    console.log("Season list loaded on screen")
     return (
+        <form>
       <select onChange={handleSeasonSelect}>
-        {seasonsList.map((season, index) => {
-          return <option key={`${season}-${index}`}>{season}</option>;
+        {seasonsList.map((x, index) => {
+          return <option key={`${x}-${index}`}>{x}</option>;
         })}
       </select>
+      </form>
     );
+    
   };
 
   async function retrieveTeamStatsFromAPI() {
@@ -101,16 +105,26 @@ function MainScreen() {
             <th>Team</th>
             <th>Total Goals Scored</th>
             <th>Total Goals Conceded</th>
+            <th>Total Matches Played</th>
+            <th>Win</th>
+            <th>Losses</th>
+            <th>Draw</th>
+            <th>SEASON</th>
           </tr>
           {teamStatList.map((team) => (
             <tr> 
               <td>{team.response.team.name}</td>
               <td>{team.response.goals.for.total.total}</td>
               <td>{team.response.goals.against.total.total}</td>
+              <td>{team.response.fixtures.played.total}</td>
+              <td>{team.response.fixtures.wins.total}</td>
+              <td>{team.response.fixtures.loses.total}</td>
+              <td>{team.response.fixtures.draws.total}</td>
+              <td>{season}</td>
             </tr>
           ))}
         </table>
-        {season}
+        
       </div>
     </>
   );

@@ -3,11 +3,13 @@ import API from "../API";
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./MainScreen.css";
+import Seasons from "../components/seasons";
+import StatList from "../components/statList";
 
 function MainScreen() {
-  const [season, setSeason] = useState("2010");
+
   const [teamStatList, setTeamStatList] = useState([]);
-  const [seasonsList, setSeasons] = useState([]);
+  const [selectedSeason, setSelectedSeason] = useState("2010");
 
   const eplTeamArray = [
     {
@@ -33,98 +35,39 @@ function MainScreen() {
   ];
 
   useEffect(() => {
-    retrieveSeasonsFromAPI();
-    console.log("SEASONS RETRIEVE")
-  }, []);
-
-  function handleSeasonSelect(e) {
-    e.preventDefault();
-    console.log(e.target.value) //Registers as selected year 
-    setSeason(e.target.value); //Registers as previous selected year
     retrieveTeamStatsFromAPI();
-    console.log(season)
-  };
+  }, [selectedSeason]);
 
-  const getListOfAllSeasons = () => {
-    console.log("Season list loaded on screen")
-    return (
-        <form>
-      <select onChange={handleSeasonSelect}>
-        {seasonsList.map((x, index) => {
-          return <option key={`${x}-${index}`}>{x}</option>;
-        })}
-      </select>
-      </form>
-    );
-    
-  };
 
   async function retrieveTeamStatsFromAPI() {
-    console.log("TEAM STATS RETRIEVE")
+    console.log("TEAM STATS RETRIEVE");
     var i;
     const teamStat = [];
     for (i = 0; i < eplTeamArray.length; i++) {
       const { data } = await API.get("/statistics", {
         params: {
           league: "39",
-          season: season,
+          season: selectedSeason,
           team: eplTeamArray[i]["id"].toString(),
         },
       });
       teamStat.push(data);
+      console.log(data)
     }
     setTeamStatList(teamStat);
-    console.log(`Retrieving data for`+season)
   }
 
-  async function retrieveSeasonsFromAPI() {
-    console.log("Inside here");
-    const { data } = await API.get("/seasons", { params: { team: "33" } });
-    const seasonArray = [];
-    data.response.map((season) => {
-      seasonArray.push(season);
-    });
-    setSeasons(seasonArray);
+  function handleSeasonSelect(updateSeason) {
+    setSelectedSeason(updateSeason);
   }
-//   function addValuesInKeyValuePair(object) {
-//     let total = 0;
-//     for (let value of Object.values(object)) {
-//       total += value;
-//     }
-//     return total;
-//   }
 
   return (
     <>
-      <h1>Team Statistics</h1>
       <div className="MainContainer">
-        <h2>SELECT SEASON</h2>
-        {getListOfAllSeasons(seasonsList)}
-        <table>
-          <tr>
-            <th>Team</th>
-            <th>Total Goals Scored</th>
-            <th>Total Goals Conceded</th>
-            <th>Total Matches Played</th>
-            <th>Win</th>
-            <th>Losses</th>
-            <th>Draw</th>
-            <th>SEASON</th>
-          </tr>
-          {teamStatList.map((team) => (
-            <tr> 
-              <td>{team.response.team.name}</td>
-              <td>{team.response.goals.for.total.total}</td>
-              <td>{team.response.goals.against.total.total}</td>
-              <td>{team.response.fixtures.played.total}</td>
-              <td>{team.response.fixtures.wins.total}</td>
-              <td>{team.response.fixtures.loses.total}</td>
-              <td>{team.response.fixtures.draws.total}</td>
-              <td>{season}</td>
-            </tr>
-          ))}
-        </table>
-        
+      <h1>TEAM STATISTICS</h1>
+        <h2>Select Season</h2>
+        <Seasons passToScreen={handleSeasonSelect} />
+        <StatList teamStatList={teamStatList} />
       </div>
     </>
   );

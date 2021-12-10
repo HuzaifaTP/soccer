@@ -6,8 +6,8 @@ function statList(props){
         <table>
           <tr>
             <th>Team</th>
-            <th>Goals Scored</th>
-            <th>Goals Conceded</th>
+            <th>Scored</th>
+            <th>Conceded</th>
             <th>Matches Played</th>
             <th>Win</th>
             <th>Losses</th>

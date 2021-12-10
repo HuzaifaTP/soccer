@@ -3,21 +3,15 @@ import API from "../API";
 import {v4 as uuidv4} from "uuid";
 
 function EplSeasons(props) {
-  const [season, setSeason] = useState(null);
   const [seasonsList, setSeasons] = useState([]);
 
   useEffect(() => {
     retrieveSeasonsFromAPI();
-    console.log("SEASONS RETRIEVE");
+    console.log("SEASONS FROM API");
   },[]);
 
-  function handleSeasonSelect(e) {
-    e.preventDefault();
-    setSeason(e.target.value);
-  }
-
   async function retrieveSeasonsFromAPI() {
-    console.log("Inside here");
+   
     const { data } = await API.get("/seasons", { params: { team: "33" } });
     const seasonArray = [];
     data.response.map((season) => {
@@ -27,13 +21,13 @@ function EplSeasons(props) {
   }
 
   const getListOfAllSeasons = () => {
-    console.log("Season list loaded on screen");
+    console.log("OPTIONS BEING LOADED");
     return (
       <form>
-        <select onChange={handleSeasonSelect}>
-          {seasonsList.map((x, index) => {
-            return <option key={uuidv4()}>{x}</option>;
-          })}
+        <select onChange={handleSeasonSelect}  value={props.selectedSeason}> 
+          {seasonsList.map((x) => {
+            return(<option key={uuidv4()} value={x}> {x} </option>) 
+        })}
         </select>
       </form>
     );
@@ -41,11 +35,15 @@ function EplSeasons(props) {
 
   function handleSeasonSelect(e) {
     e.preventDefault();
-    setSeason(e.target.value);
     props.passToScreen(e.target.value);
   }
 
-  return <>{getListOfAllSeasons(seasonsList)}</>;
-}
+  return (
+<>
+{getListOfAllSeasons(seasonsList)}
+
+</>
+
+)}
 
 export default EplSeasons

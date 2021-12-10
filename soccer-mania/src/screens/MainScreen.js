@@ -9,7 +9,7 @@ import StatList from "../components/statList";
 function MainScreen() {
 
   const [teamStatList, setTeamStatList] = useState([]);
-  const [selectedSeason, setSelectedSeason] = useState("2010");
+  const [selectedSeason, setSelectedSeason] = useState("2011");
 
   const eplTeamArray = [
     {
@@ -66,7 +66,7 @@ function MainScreen() {
       <div className="MainContainer">
       <h1>TEAM STATISTICS</h1>
         <h2>Select Season</h2>
-        <Seasons passToScreen={handleSeasonSelect} />
+        <Seasons passToScreen={handleSeasonSelect} selectedSeason={selectedSeason} />
         <StatList teamStatList={teamStatList} />
       </div>
     </>
